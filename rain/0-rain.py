@@ -1,35 +1,20 @@
 #!/usr/bin/python3
-"""calculate water retained"""
+"""create an algorithm for calculating the rain"""
 
 
 def rain(walls):
-    total_water_retained = 0
-    start_index = None
-    end_index = None
-    limit = len(walls)
+    """Calculate how much water will be retained after it rains."""
+    if not walls or len(walls) < 3:
+        return 0
 
-    i = 0
-    while i < limit:
-        next_wall_height = 0
-        if i + 1 < limit:
-            next_wall_height = walls[i + 1]
+    water = 0
+    for i in range(1, len(walls) - 1):
+        left = walls[i]
+        for j in range(i):
+            left = max(left, walls[j])
+        right = walls[i]
+        for j in range(i + 1, len(walls)):
+            right = max(right, walls[j])
+        water += min(left, right) - walls[i]
 
-        if start_index is not None and end_index is not None:
-            smallest_wall_height = min(walls[start_index], walls[end_index])
-            for wall_index in range(start_index + 1, end_index):
-                total_water_retained += smallest_wall_height - walls[wall_index]
-            start_index = None
-            end_index = None
-
-        if start_index is None and walls[i] > 0:
-            start_index = i
-            i += 1
-            continue
-
-        if start_index is not None and walls[i] > walls[i - 1] and walls[i] >= next_wall_height:
-            end_index = i
-            continue
-
-        i += 1
-
-    return total_water_retained
+    return water
